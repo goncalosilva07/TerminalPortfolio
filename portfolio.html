@@ -80,6 +80,45 @@
         margin-left: 5px;
         display: inline-grid;
     }
+
+    /*
+    .dashed-border-topAndBottom {
+        width: 100%;
+        height: 100%;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        border-image: url(images/borderTopAndDown.png) 10000 0 repeat;
+    }
+    */
+
+
+    .dashed-border-topAndBottom {
+        width: 100%;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        border-image: url(images/borderTopAndDown.png) 10000 0 repeat;
+    }
+
+    .dashed-border-leftAndRight {
+        width: 35%;
+        border-left: 1px solid transparent;
+        border-right: 1px solid transparent;
+        border-image: url(images/borderLeftAndRight.png) 1 10 repeat;
+    }
+
+    .dashed-border-bottom {
+        width: 100%;
+        height: 100%;
+        border-bottom: 1px solid transparent;
+        border-image: url(images/borderTopAndDown.png) 10000 0 repeat;
+    }
+
+    th, td {
+        padding: 10px;
+        color: white;
+    }
+
+
 </style>
 <body style="background-color: pink;">
     <div class="container">
@@ -101,9 +140,6 @@
                     <span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span>
                     <input class="active" type="text" style="color: white;" autofocus>
                 </div>
-
-                
-
             </div>
         </div>
     </div>
@@ -111,6 +147,7 @@
 </html>
 <script>
     var terminal = {
+        
         enter: function(command){
             $(".inputActiveDiv").remove();
             var htmlToAppend = $(".terminalBody").html();
@@ -126,7 +163,7 @@
                                 ' </div>';
             } else {
                 htmlToAppend += returnData;
-                htmlToAppend += '<div style="margin-top: 20px;" class="inputActiveDiv">' +
+                htmlToAppend += '<div style="margin-top: 20px; margin-bottom: 20px;" class="inputActiveDiv">' +
                                 '<span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span> ' + 
                                 '<input class="active" type="text" style="color: white;" autofocus>' + 
                                 ' </div>';
@@ -146,6 +183,9 @@
                 case "cd about":
                     return terminal.cdAbout();
                     break;
+                case "cd skills":
+                    return terminal.cdSkills();
+                    break;
                 case "clear":
                     return "clear";
                 default:
@@ -154,7 +194,8 @@
         },
 
         helpCommands: function(){
-            var help = {'clear':'Clear the terminal', 'dir':'List portfolio sections. Let\'s see what\'s here... Spoiler: nothing classified!', 'cd [section]': 'Change to the specified section. Ex: cd about.'},
+            var help = {'clear':'Clear the terminal', 'dir':'List portfolio sections. Let\'s see what\'s here... Spoiler: nothing classified!', 
+            'cd [section]': 'Change to the specified section. Ex: cd about.'},
             htmlToAppend = "";
             $.each(help, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -163,7 +204,7 @@
         },
 
         dirCommands: function(){
-            var dir = {'about':'All about me. Fun facts, life story, and a bit of ego.'},
+            var dir = {'about':'All about me. Fun facts, life story, and a bit of ego.', 'skills': 'A showcase of my abilities. From code wizardry to database sorcery.'},
             htmlToAppend = "";
             $.each(dir, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -192,6 +233,48 @@
 
                 
         },
+
+        cdSkills: function(){
+
+            var htmlToAppend = '<div>',
+                skills = [['Markup and Styling Languages', {'HTML': ['[####################]', '100%'], 'CSS': ['[##########----------]', '50%']}],
+                         ['Programming Languages', {'Python': ['[############--------]', '60%'], 'Kotlin': ['[############--------]', '60%'], 'C#': ['[##########----------]', '50%'], 'JQuery': ['[##################--]', '90%']}],
+                         ['Frameworks', {'ASP.NET': ['[##########----------]', '50%'], 'Flask': ['[############--------]', '60%'], 'KTor': ['[##############------]', '70%']}],
+                         ['Data Base', {'SQL': ['[##############------]', '70%'], 'MySQL': ['[##############------]', '70%']}]];
+
+            debugger;
+
+            $.each(skills, function( index, value ) {
+                debugger;
+                htmlToAppend += '<div class="dashed-border-leftAndRight" style="margin-top: 20px; margin-left:40px;">' +
+                                '<div class="dashed-border-topAndBottom" style="padding: 10px;">' +
+                                '<span style="color: limegreen;">[' + value[0] + ']</span>' +
+                                '</div>' +
+                                '<div class="dashed-border-bottom" style="padding: 10px;">' +
+                                '<table>';
+
+                $.each(value[1], function(skillName, skillDescription){
+                    debugger;
+                    htmlToAppend += '<tr>'+
+                                    '<th style="color: deeppink;">' + skillName + ':</th>'+
+                                    '<td>' + skillDescription[0] + '</td>'+
+                                    '<td>' + skillDescription[1] + '</td>' +                                                        
+                                    '</tr>';
+                });
+
+                htmlToAppend += '</table>'+                
+                                '</div>'+
+                                '</div>';
+
+
+            });
+
+            htmlToAppend += '</div>';
+            
+            return htmlToAppend;
+                
+        },
+
     };
     $(document).ready(function () {
         $(".closeTerminal").on("click", function (e) {
