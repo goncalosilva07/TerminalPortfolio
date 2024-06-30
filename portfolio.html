@@ -65,7 +65,7 @@
 
     .header {
         background-color: azure;
-        height: 35px;
+        min-height: 33px;
         display: flex;
         align-items: center;
         padding: 0 5px;
@@ -79,6 +79,23 @@
         overflow-y: auto;
         margin-left: 5px;
         display: inline-grid;
+    }
+
+    .colorAbout {
+        /*color: limegreen;*/
+        color: white;
+    }
+
+    /*
+    .imgMeAbout {
+        border: 2px limegreen solid;
+        border-right: 2px deeppink solid;
+        border-top: 2px deeppink solid;
+    }
+        */
+
+    .imgMeAbout {
+        border: 1px limegreen solid;
     }
 
     /*
@@ -108,7 +125,6 @@
 
     .dashed-border-bottom {
         width: 100%;
-        height: 100%;
         border-bottom: 1px solid transparent;
         border-image: url(images/borderTopAndDown.png) 10000 0 repeat;
     }
@@ -118,6 +134,28 @@
         color: white;
     }
 
+    .educationTable th {
+        color: deeppink;
+    }
+
+    #spaceship {
+        position: absolute;
+        left: 47.3%;
+        width: 100px;
+        height: 30px;
+        background-color: aliceblue;
+        bottom: 15vh;
+    }
+
+    #ball {
+        position: absolute;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        background-color: aliceblue;
+        bottom: 80vh;
+    }
 
 </style>
 <body style="background-color: pink;">
@@ -140,6 +178,22 @@
                     <span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span>
                     <input class="active" type="text" style="color: white;" autofocus>
                 </div>
+
+
+
+
+                
+               <!--
+                
+                <div class="game" style="width: 100%; display: inline-flex;">
+
+                    <div id="ball"></div>
+                    <div id="spaceship"></div>
+
+                </div>
+                -->
+
+
             </div>
         </div>
     </div>
@@ -147,8 +201,16 @@
 </html>
 <script>
     var terminal = {
+        gameMode: false,
+        gameModeInitial: true,
+        ballDirectionX: 1,
+        ballDirectionY: 1,
+        ballSpeed: 2,
+        ballTouches: 0,
+        interval: "",
         
         enter: function(command){
+            debugger;
             $(".inputActiveDiv").remove();
             var htmlToAppend = $(".terminalBody").html();
             htmlToAppend += '<div style="margin-top: 20px;">' +
@@ -161,6 +223,13 @@
                                 '<span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span> ' + 
                                 '<input class="active" type="text" style="color: white;" autofocus>' + 
                                 ' </div>';
+            } if (returnData == "pong game"){
+                htmlToAppend = '<div class="game" style="width: 100%; display: inline-flex;">' +
+                               '<div id="ball"></div>' +
+                               '<div id="spaceship"></div>' +
+                               '</div>';
+                
+                terminal.pongGameInitialData();                
             } else {
                 htmlToAppend += returnData;
                 htmlToAppend += '<div style="margin-top: 20px; margin-bottom: 20px;" class="inputActiveDiv">' +
@@ -186,8 +255,13 @@
                 case "cd skills":
                     return terminal.cdSkills();
                     break;
+                case "cd education":
+                    return terminal.cdEducation();
+                    break;
                 case "clear":
                     return "clear";
+                case "pong game":
+                    return "pong game";
                 default:
                     return '<span style="color: white;">"' + command + '" is not recognized as an internal command.</span>';
             }          
@@ -204,7 +278,8 @@
         },
 
         dirCommands: function(){
-            var dir = {'about':'All about me. Fun facts, life story, and a bit of ego.', 'skills': 'A showcase of my abilities. From code wizardry to database sorcery.'},
+            var dir = {'about':'All about me. Fun facts, life story, and a bit of ego.', 'skills': 'A showcase of my abilities. From code wizardry to database sorcery.', 
+                      'education': 'My academic adventures. Degrees, courses, and certifications.'},
             htmlToAppend = "";
             $.each(dir, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -215,18 +290,18 @@
         cdAbout: function(){
 
             var htmlToAppend = '<div style="margin-top: 30px;">' +
-                                '<img src="images/me.jpg" width="15%" style="border: 1px white solid;">' +
-                                '<img src="images/name.png" width="50%" style="margin-left: 20px">' +
+                                '<img src="images/me.jpg" width="15%" class="imgMeAbout">' +
+                                '<img src="images/namePinkAndLime.png" width="50%" style="margin-left: 20px">' +
                                 '</div>';
 
             htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px;">' +
-                            '<span>Hello! My name is Gonçalo Silva, born on May 22, 2003. I consider myself a humble person with a lot of ambition, dedication, and discipline. I\'m a gym lover who enjoys working out, and programming is my second passion.</span>' +
+                            '<span class="colorAbout" >Hello! My name is Gonçalo Silva, born on May 22, 2003. I consider myself a humble person with a lot of ambition, dedication, and discipline. I\'m a gym lover who enjoys working out, and programming is my second passion.</span>' +
                             '<br>' +
-                            '<span>I fell in love with programming during high school when I enrolled in the professional computer science course. This journey led me to an internship at Metaveiro, a company that opened its doors for me and provided the guidance I needed to embark on this wonderful path in my programming career.</span>' +
+                            '<span class="colorAbout" >I fell in love with programming during high school when I enrolled in the professional computer science course. This journey led me to an internship at Metaveiro, a company that opened its doors for me and provided the guidance I needed to embark on this wonderful path in my programming career.</span>' +
                             '<br>' +
-                            '<span>Currently, I\'m pursuing a CTESP in Software Development at the University of Aveiro.</span>' +
+                            '<span class="colorAbout" >Currently, I\'m pursuing a CTESP in Software Development at the University of Aveiro.</span>' +
                             '<br>' +
-                            '<span>When I\'m not lifting weights at the gym, I\'m probably lifting lines of code. Who says you can\'t have brains and brawn?</span>' +
+                            '<span class="colorAbout" >When I\'m not lifting weights at the gym, I\'m probably lifting lines of code. Who says you can\'t have brains and brawn?</span>' +
                             '</div>';
             
             return htmlToAppend;
@@ -275,15 +350,178 @@
                 
         },
 
+        cdEducation: function(){
+
+            var htmlToAppend = '',
+                education = {'Soares Basto': ['My academic journey began at Soares Basto School,' +
+                'where I enrolled in the professional course for Computer Technician - Systems. Initially,' +
+                'I was drawn to the hardware side of things, but it didn\'t take long for me to fall head over heels for programming.' +
+                'The logic, the creativity, and the constant problem-solving challenges had me hooked.', ['Programming', 'Information Systems and Database', 
+                'Network and Computer Architecture', 'Computer Applications']], 
+                'ESAN - UA': ['After finishing high school and completing a professional internship, I decided to take my education to the next level.' + 
+                'That\’s when I joined the CTesp in Software Development at the University of Aveiro.' +
+                'This course has been an incredible adventure, equipping me with the skills and knowledge I need for a promising career in software development.' , [
+                'Higher education in software development, with an emphasis on programming languages, web development, databases, and software engineering.',
+                'Practical experience in individual and group projects, including internships in industry-related companies.',
+                ' Skills acquired in programming (Kotlin, Java, Python), web development (HTML, CSS, JavaScript), databases (MySQL), and agile development methodologies.']]};
+
+
+            htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px;">' +
+                            '<div style="margin-top: 15px; margin-bottom: 30px;">' +
+                            '<img src="images/education.png" width="50%">' +
+                            '</div>'; 
+
+            $.each(education, function(indexDic, valDic){
+                debugger;
+                htmlToAppend += '<span>' + valDic[0] + '</span>';
+
+                htmlToAppend += '<div class="dashed-border-leftAndRight" style="margin-top: 20px; margin-left:40px;">' +
+                                '<div class="dashed-border-topAndBottom" style="padding: 10px;">' +
+                                '<span style="color: limegreen;">[Technical Training]</span>' +
+                                '</div>' +
+                                '<div class="dashed-border-bottom" style="padding: 10px;">' +
+                                '<table class="educationTable">';
+
+                $.each(valDic[1], function(indexArray, valArray){
+                    debugger;
+                    htmlToAppend += '<tr>' +
+                                    '<th>+</th>' +
+                                    '<td>' + valArray + '</td>' +                                                   
+                                    '</tr>';
+                });
+
+                htmlToAppend += '</table>' +
+                                '</div>' +
+                                '</div>' +
+                                '<br>';
+
+            });
+
+            htmlToAppend += '<span>Now, when I\'m not coding my heart out, you can find me reminiscing about those early days when I thought hardware was my true love.' +
+                            'Little did I know, software would sweep me off my feet!</span>';  
+
+            htmlToAppend += '</div>';          
+
+            return htmlToAppend;
+                
+        },
+
+        pongGameInitialData: function(){
+
+            terminal.gameMode = true;
+            
+        },
+
+
+        ballMovement: function(){
+
+            var ballX = $("#ball").position().left;
+            var ballY = $("#ball").position().top;
+
+            var spaceshipX = $("#spaceship").position().left;
+            var spaceshipY = $("#spaceship").position().top;
+
+            //var maxHeight = $(".terminal").height();
+            //var maxHeight = $(window).height();
+            var maxHeight = $(".terminalBody").position().top;
+            var minHeight = $(".terminal").position().top + $(".terminal").height();
+            var minWidth = $(".terminal").position().left;
+            //var maxWidth = $(".terminal").width() + (($(window).width() - $(".terminal").width()) / 2);
+            var maxWidth = ($(".terminal").position().left + $(".terminal").width()) - 22;
+            
+            var ballTouchesTemp = 0;
+
+            if(ballY >= spaceshipY && (ballX >=spaceshipX && ballX <= (spaceshipX + $("#spaceship").width()))){
+                //terminal.ballDirectionX = -1;
+                terminal.ballDirectionY = -1;
+                terminal.ballTouches += 1;
+                ballTouchesTemp = terminal.ballTouches;
+            }
+            
+            if (ballY <= maxHeight){
+                terminal.ballDirectionY = 1;
+            }
+
+            if (ballX <= minWidth){
+                terminal.ballDirectionX = 1;
+            }
+
+            if (ballX >= maxWidth){
+                terminal.ballDirectionX = -1;
+            }
+
+            if (ballY >= minHeight){
+                debugger;
+                //$("#ball").css('bottom', '80vh');
+                //$("#ball").css('left', '50%');
+                terminal.enter("pong game");
+            }
+
+            if (((ballTouchesTemp % 5) == 0) && (ballTouchesTemp != 0)){
+                
+                terminal.ballSpeed += 0.2;
+            }
+
+
+            $('#ball').css('left', ballX + (terminal.ballSpeed * terminal.ballDirectionX));
+            $('#ball').css('top', ballY + (terminal.ballSpeed * terminal.ballDirectionY));
+
+            
+        }
+
     };
     $(document).ready(function () {
+
         $(".closeTerminal").on("click", function (e) {
             window.close();
         });
+
         $(document).on('keydown', '.active', function(e) {
             if (e.which == 13) {      
                 terminal.enter($(".active").val());
             }
         });
+
+        $(document).keydown(function(e) {
+            if (terminal.gameMode == true){
+
+                if (e.which == 27) {              
+                    var htmlToAppend = '<div style="margin-top: 20px;" class="inputActiveDiv">' +
+                                       '<span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span> ' + 
+                                       '<input class="active" type="text" style="color: white;" autofocus>' + 
+                                       '</div>';
+
+                    debugger;
+                    clearInterval(terminal.interval);
+                    terminal.gameMode = false;
+                    terminal.gameModeInitial = true;
+                    $(".terminalBody").html(htmlToAppend);
+                    $(".active").focus();
+                    $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);
+                }
+
+                //terminal.ballMovement();
+                if (terminal.gameModeInitial == true){
+                    terminal.interval = setInterval(terminal.ballMovement, 10);
+                }
+                
+                const valueToMove = 10,
+                      spaceShipPosition = $("#spaceship").position().left;
+
+                if (e.which == 37) { // 37 is the keycode for the left arrow key                
+                    var newPosition = spaceShipPosition - valueToMove;
+                    $('#spaceship').css('left', newPosition);
+                }
+
+                if (e.which == 39) {                
+                    var newPosition = spaceShipPosition + valueToMove;
+                    $('#spaceship').css('left', newPosition);
+                }
+
+                terminal.gameModeInitial = false;
+            }
+        });
+        
+       
     });
 </script>
