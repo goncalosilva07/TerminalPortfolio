@@ -154,7 +154,33 @@
         height: 20px;
         border-radius: 10px;
         background-color: aliceblue;
-        bottom: 80vh;
+        /*bottom: 80vh;*/
+        top: 20%;
+    }
+
+    #countdown {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 30vh;
+        font-size: 50px;
+        color: limegreen;
+    }
+
+    .headerName {
+        font-family: 'IBM Plex Mono', monospace;
+        margin-left: 5px;
+        font-size: 15px;
+        padding-top: 2px;
+        color: deeppink;
+    }
+
+    .headerSymbol {
+        color: deeppink;
+    }
+
+    .closeTerminal {
+        margin-left: auto; 
+        color: #192734;
     }
 
 </style>
@@ -162,9 +188,9 @@
     <div class="container">
         <div class="terminal">
             <div class="header">
-                <span class="material-symbols-outlined" style="color: lightsalmon;">terminal</span>
-                <span style="font-family: 'IBM Plex Mono', monospace; margin-left: 5px; color: lightsalmon;">goncalo´s portfolio</span>
-                <span class="material-symbols-outlined closeTerminal" style="margin-left: auto; color: #192734;">close</span>
+                <span class="material-symbols-outlined headerSymbol">terminal</span>
+                <span class="headerName">C:\Windows\System32\portfolio.exe</span>
+                <span class="material-symbols-outlined closeTerminal">close</span>
             </div>
             <div class="terminalBody">
                 <span style="color: white; margin-top: 10px;">Gonçalo Portfolio [Version 10.0.19045.4529]</span>
@@ -180,9 +206,6 @@
                 </div>
 
 
-
-
-                
                <!--
                 
                 <div class="game" style="width: 100%; display: inline-flex;">
@@ -207,10 +230,9 @@
         ballDirectionY: 1,
         ballSpeed: 2,
         ballTouches: 0,
-        interval: "",
+        interval: null,
         
         enter: function(command){
-            debugger;
             $(".inputActiveDiv").remove();
             var htmlToAppend = $(".terminalBody").html();
             htmlToAppend += '<div style="margin-top: 20px;">' +
@@ -228,7 +250,8 @@
                                '<div id="ball"></div>' +
                                '<div id="spaceship"></div>' +
                                '</div>';
-                
+
+                $(".terminalBody").html(htmlToAppend);
                 terminal.pongGameInitialData();                
             } else {
                 htmlToAppend += returnData;
@@ -237,10 +260,13 @@
                                 '<input class="active" type="text" style="color: white;" autofocus>' + 
                                 ' </div>';
             }
-            $(".terminalBody").html(htmlToAppend);
-            //$(".terminalBody").scrollTop($(".terminalBody")[0].scrollHeight);  // Auto-scroll to the bottom
-            $(".active").focus();
-            $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);
+
+            if (returnData != "pong game"){
+                $(".terminalBody").html(htmlToAppend);
+                //$(".terminalBody").scrollTop($(".terminalBody")[0].scrollHeight);  // Auto-scroll to the bottom
+                $(".active").focus();
+                $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);
+            }
         },
 
         commandSeeker: function(command){
@@ -406,12 +432,29 @@
                 
         },
 
-        pongGameInitialData: function(){
+        pongWaitTime: function(){
+            var htmlToAppend = '<div id="countdown"></div>',
+                numberForCountdown = 3;
 
-            terminal.gameMode = true;
-            
+            $(".game").html($(".game").html() + htmlToAppend);
+
+            var countdownInterval = setInterval(function(){
+                $("#countdown").html(numberForCountdown);
+                numberForCountdown--;
+                if(numberForCountdown == 0){
+                    clearInterval(countdownInterval);
+                    setTimeout(function(){
+                        $("#countdown").remove();
+                        terminal.interval = setInterval((terminal.ballMovement), 10);
+                    }, 1000);                 
+                }
+            }, 1000);    
         },
 
+        pongGameInitialData: function(){
+            terminal.gameMode = true;
+            terminal.pongWaitTime();      
+        },
 
         ballMovement: function(){
 
@@ -451,21 +494,31 @@
             }
 
             if (ballY >= minHeight){
-                debugger;
                 //$("#ball").css('bottom', '80vh');
                 //$("#ball").css('left', '50%');
-                terminal.enter("pong game");
+                debugger;
+                clearInterval((terminal.interval));
+                $("#ball").css('top', '20%');
+                $("#ball").css('left', '50%');
+               
+                /*
+                setTimeout(function(){ 
+                    console.log(1);
+                    terminal.interval = setInterval((terminal.ballMovement), 10);
+                }, 3000);
+                */
+                //terminal.enter("pong game");
+                terminal.pongWaitTime();
+                
+            }else{
+                $('#ball').css('left', ballX + (terminal.ballSpeed * terminal.ballDirectionX));
+                $('#ball').css('top', ballY + (terminal.ballSpeed * terminal.ballDirectionY));
             }
 
             if (((ballTouchesTemp % 5) == 0) && (ballTouchesTemp != 0)){
                 
                 terminal.ballSpeed += 0.2;
             }
-
-
-            $('#ball').css('left', ballX + (terminal.ballSpeed * terminal.ballDirectionX));
-            $('#ball').css('top', ballY + (terminal.ballSpeed * terminal.ballDirectionY));
-
             
         }
 
@@ -492,7 +545,7 @@
                                        '</div>';
 
                     debugger;
-                    clearInterval(terminal.interval);
+                    clearInterval((terminal.interval));
                     terminal.gameMode = false;
                     terminal.gameModeInitial = true;
                     $(".terminalBody").html(htmlToAppend);
@@ -500,25 +553,36 @@
                     $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);
                 }
 
+                var minWidth = $(".terminal").position().left;
+                var maxWidth = ($(".terminal").position().left + $(".terminal").width()) - 22;
+
                 //terminal.ballMovement();
+                /*
                 if (terminal.gameModeInitial == true){
-                    terminal.interval = setInterval(terminal.ballMovement, 10);
+                    terminal.interval = setInterval((terminal.ballMovement), 10);
                 }
+                */
                 
                 const valueToMove = 10,
                       spaceShipPosition = $("#spaceship").position().left;
 
-                if (e.which == 37) { // 37 is the keycode for the left arrow key                
-                    var newPosition = spaceShipPosition - valueToMove;
-                    $('#spaceship').css('left', newPosition);
+
+                if (!((spaceShipPosition - valueToMove) <= minWidth)){            
+                    if (e.which == 37) { // 37 is the keycode for the left arrow key                
+                        var newPosition = spaceShipPosition - valueToMove;
+                        $('#spaceship').css('left', newPosition);
+                    }
                 }
 
-                if (e.which == 39) {                
-                    var newPosition = spaceShipPosition + valueToMove;
-                    $('#spaceship').css('left', newPosition);
+
+                if (!(((spaceShipPosition + $("#spaceship").width() - 22) + valueToMove) >= maxWidth)){
+                    if (e.which == 39) {                
+                        var newPosition = spaceShipPosition + valueToMove;
+                        $('#spaceship').css('left', newPosition);
+                    }
                 }
 
-                terminal.gameModeInitial = false;
+                //terminal.gameModeInitial = false;
             }
         });
         
