@@ -284,9 +284,11 @@
                 case "cd education":
                     return terminal.cdEducation();
                     break;
+                case "games":
+                    return terminal.games();
                 case "clear":
                     return "clear";
-                case "pong game":
+                case "game pong":
                     return "pong game";
                 default:
                     return '<span style="color: white;">"' + command + '" is not recognized as an internal command.</span>';
@@ -295,7 +297,8 @@
 
         helpCommands: function(){
             var help = {'clear':'Clear the terminal', 'dir':'List portfolio sections. Let\'s see what\'s here... Spoiler: nothing classified!', 
-            'cd [section]': 'Change to the specified section. Ex: cd about.'},
+            'cd [section]': 'Change to the specified section. Ex: cd about.', 'games':'Show all the games! (Caution: Highly addictive content ahead)',
+            'game [game_name]': 'Ready to play? Choose your game and let\'s get started!'},
             htmlToAppend = "";
             $.each(help, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -432,6 +435,15 @@
                 
         },
 
+        games: function(){
+            var games = {'pong':'The original tennis match, but with rectangles. Get ready to pong like it\s 1972!'},
+            htmlToAppend = "";
+            $.each(games, function(index, value){
+                htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
+            });
+            return htmlToAppend;
+        },
+
         pongWaitTime: function(){
             var htmlToAppend = '<div id="countdown"></div>',
                 numberForCountdown = 3;
@@ -453,7 +465,8 @@
 
         pongGameInitialData: function(){
             terminal.gameMode = true;
-            terminal.pongWaitTime();      
+            terminal.pongWaitTime();   
+            terminal.ballDirectionX = terminal.ballInitialShotRandomize();   
         },
 
         ballMovement: function(){
@@ -461,8 +474,14 @@
             var ballX = $("#ball").position().left;
             var ballY = $("#ball").position().top;
 
+            var ballHeight = $("#ball").height();
+            var ballWidth = $("#ball").width();
+
             var spaceshipX = $("#spaceship").position().left;
             var spaceshipY = $("#spaceship").position().top;
+
+            var spaceshipWidth = $("#spaceship").width();
+            var spaceshipHeight = $("#spaceship").height();
 
             //var maxHeight = $(".terminal").height();
             //var maxHeight = $(window).height();
@@ -474,7 +493,19 @@
             
             var ballTouchesTemp = 0;
 
-            if(ballY >= spaceshipY && (ballX >=spaceshipX && ballX <= (spaceshipX + $("#spaceship").width()))){
+            if(((ballY + ballHeight) >= spaceshipY && (spaceshipY + spaceshipHeight) >= (ballY + ballHeight)) && (ballX >=spaceshipX && ballX <= (spaceshipX + $("#spaceship").width()))){
+        
+                debugger;
+
+                var racketHalf = (spaceshipX + (spaceshipWidth / 2));
+                var ballTouchPoint = (ballX + (ballWidth / 2));
+
+                if((spaceshipX + (spaceshipWidth / 2)) >= (ballX + (ballWidth / 2))){
+                    terminal.ballDirectionX = -1;
+                }else{
+                    terminal.ballDirectionX = 1;
+                }
+
                 //terminal.ballDirectionX = -1;
                 terminal.ballDirectionY = -1;
                 terminal.ballTouches += 1;
@@ -496,7 +527,6 @@
             if (ballY >= minHeight){
                 //$("#ball").css('bottom', '80vh');
                 //$("#ball").css('left', '50%');
-                debugger;
                 clearInterval((terminal.interval));
                 $("#ball").css('top', '20%');
                 $("#ball").css('left', '50%');
@@ -509,6 +539,7 @@
                 */
                 //terminal.enter("pong game");
                 terminal.pongWaitTime();
+                terminal.ballDirectionX = terminal.ballInitialShotRandomize();
                 
             }else{
                 $('#ball').css('left', ballX + (terminal.ballSpeed * terminal.ballDirectionX));
@@ -520,8 +551,15 @@
                 terminal.ballSpeed += 0.2;
             }
             
-        }
+        },
 
+        ballInitialShotRandomize: function(){
+            //1 - left | 2 - right
+            var shotSide = 1 + Math.floor(Math.random() * 2);
+            var shotAngle = shotSide == 1 ? Math.random() * -1 : Math.random() * 1;
+
+            return shotAngle;
+        },
     };
     $(document).ready(function () {
 
