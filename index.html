@@ -233,19 +233,22 @@
         interval: null,
         
         enter: function(command){
+            debugger;
             $(".inputActiveDiv").remove();
             var htmlToAppend = $(".terminalBody").html();
             htmlToAppend += '<div style="margin-top: 20px;">' +
                             '<span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span>' + 
                             '<span style="color: white;"> ' + command + '</span>' + 
                             '</div>';
+
             var returnData = terminal.commandSeeker(command);
+
             if (returnData == "clear"){
                 htmlToAppend = '<div style="margin-top: 20px;" class="inputActiveDiv">' +
                                 '<span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span> ' + 
                                 '<input class="active" type="text" style="color: white;" autofocus>' + 
                                 ' </div>';
-            } if (returnData == "pong game"){
+            } else if (returnData == "pong game"){
                 htmlToAppend = '<div class="game" style="width: 100%; display: inline-flex;">' +
                                '<div id="ball"></div>' +
                                '<div id="spaceship"></div>' +
