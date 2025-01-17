@@ -117,7 +117,7 @@
     }
 
     .dashed-border-leftAndRight {
-        width: 35%;
+        width: 39%;
         border-left: 1px solid transparent;
         border-right: 1px solid transparent;
         border-image: url(images/borderLeftAndRight.png) 1 10 repeat;
@@ -224,6 +224,7 @@
 </html>
 <script>
     var terminal = {
+        //game pong
         gameMode: false,
         gameModeInitial: true,
         ballDirectionX: 1,
@@ -231,9 +232,14 @@
         ballSpeed: 2,
         ballTouches: 0,
         interval: null,
+        //projects
+        gitHubAccount: "goncalosilva07",
+        projectName: null,
+
         
-        enter: function(command){
-            debugger;
+        enter: async function(command){
+ 
+            //
             $(".inputActiveDiv").remove();
             var htmlToAppend = $(".terminalBody").html();
             htmlToAppend += '<div style="margin-top: 20px;">' +
@@ -241,7 +247,14 @@
                             '<span style="color: white;"> ' + command + '</span>' + 
                             '</div>';
 
-            var returnData = terminal.commandSeeker(command);
+
+            //projetcs command
+            if (command[0] == "p" && (command[2] == "d" || command[2] == "i")){
+                terminal.projectName = command.slice(4);
+                command = command[0] + " " + command[2];
+            }
+               
+            var returnData = await terminal.commandSeeker(command);
 
             if (returnData == "clear"){
                 htmlToAppend = '<div style="margin-top: 20px;" class="inputActiveDiv">' +
@@ -272,7 +285,7 @@
             }
         },
 
-        commandSeeker: function(command){
+        commandSeeker: async function(command){
             switch (command){
                 case "help":          
                     return terminal.helpCommands();
@@ -287,12 +300,19 @@
                 case "cd education":
                     return terminal.cdEducation();
                     break;
+                case "cd projects":
+                    return terminal.cdProjects();
+                    break;
                 case "games":
                     return terminal.games();
                 case "clear":
                     return "clear";
                 case "game pong":
                     return "pong game";
+                case "p d":
+                    return terminal.getProjectDesc();
+                case "p i":
+                    return terminal.getProjectImages();
                 default:
                     return '<span style="color: white;">"' + command + '" is not recognized as an internal command.</span>';
             }          
@@ -301,7 +321,8 @@
         helpCommands: function(){
             var help = {'clear':'Clear the terminal', 'dir':'List portfolio sections. Let\'s see what\'s here... Spoiler: nothing classified!', 
             'cd [section]': 'Change to the specified section. Ex: cd about.', 'games':'Show all the games! (Caution: Highly addictive content ahead)',
-            'game [game_name]': 'Ready to play? Choose your game and let\'s get started!'},
+            'game [game_name]': 'Ready to play? Choose your game and let\'s get started!',
+            'p d [project_name]': 'Curious? This is your backstage pass to all the juicy project info.', 'p i [project_name]': 'For the curious and the skeptical. Here’s what the project looks like!'},
             htmlToAppend = "";
             $.each(help, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -311,7 +332,7 @@
 
         dirCommands: function(){
             var dir = {'about':'All about me. Fun facts, life story, and a bit of ego.', 'skills': 'A showcase of my abilities. From code wizardry to database sorcery.', 
-                      'education': 'My academic adventures. Degrees, courses, and certifications.'},
+                      'education': 'My academic adventures. Degrees, courses, and certifications.', 'projects': 'My portfolio of triumphs (and a few lessons in "what not to do").'},
             htmlToAppend = "";
             $.each(dir, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -344,10 +365,11 @@
         cdSkills: function(){
 
             var htmlToAppend = '<div>',
-                skills = [['Markup and Styling Languages', {'HTML': ['[####################]', '100%'], 'CSS': ['[##########----------]', '50%']}],
-                         ['Programming Languages', {'Python': ['[############--------]', '60%'], 'Kotlin': ['[############--------]', '60%'], 'C#': ['[##########----------]', '50%'], 'JQuery': ['[##################--]', '90%']}],
+                skills = [['Markup and Styling Languages', {'HTML': ['[##################--]', '90%'], 'CSS': ['[##########----------]', '50%']}],
+                         ['Programming Languages', {'Python': ['[############--------]', '60%'], 'Kotlin': ['[############--------]', '60%'], 'C#': ['[##########----------]', '50%'], 'JQuery': ['[##################--]', '90%'], 'PHP': ['[############--------]', '60%']}],
                          ['Frameworks', {'ASP.NET': ['[##########----------]', '50%'], 'Flask': ['[############--------]', '60%'], 'KTor': ['[##############------]', '70%']}],
-                         ['Data Base', {'SQL': ['[##############------]', '70%'], 'MySQL': ['[##############------]', '70%']}]];
+                         ['Data Base', {'SQL': ['[##############------]', '70%'], 'MySQL': ['[##############------]', '70%']}],
+                         ['Mobile Development', {'Android Studio': ['[##############------]', '70%']}]];
 
             debugger;
 
@@ -436,6 +458,76 @@
 
             return htmlToAppend;
                 
+        },
+
+        cdProjects: function(){
+
+            return new Promise(function(resolve, reject) {
+                var htmlToAppend = '';
+
+                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">'; 
+
+                $.ajax({
+                    url: "https://api.github.com/users/" + terminal.gitHubAccount + "/repos",
+                    type: "GET",
+                    contentType: "application/json",
+                    data: null,
+                    success: function (data) {
+
+                        $.each(data, function( key, value ) {
+                            htmlToAppend += '|-- ' + value.name + '<br>';
+                        });
+
+                        htmlToAppend += '</div>';
+
+                        htmlToAppend += '<span style="color: white; margin-top: 30px;">Type ' + "'p d {project_name}'" + ' to see the project description or ' + "'p i {project_name}'" + ' to see some images of the project.</span>'
+                        resolve(htmlToAppend);
+                    },
+                    error: function (data) {
+                        htmlToAppend += 'Error viewing the projects';
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend);
+                    }
+                });
+            });
+
+        },
+
+        getProjectDesc: function(){
+          
+            return new Promise(function(resolve, reject) {
+                var htmlToAppend = '';
+
+                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">'; 
+
+                $.ajax({
+                    url: "https://api.github.com/repos/" + terminal.gitHubAccount + "/" + terminal.projectName,
+                    type: "GET",
+                    contentType: "application/json",
+                    data: null,
+                    success: function (data) {
+                        debugger;
+                        htmlToAppend += '<span style="font-weight: 500;"> > ' + data.name + '</span><br>';
+                        htmlToAppend += data.description == null ? 'Project without description' : data.description;
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend); 
+                    },
+                    error: function (data) {
+                        htmlToAppend += 'Project not found';
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend); 
+                    }
+                });
+            });
+        },
+
+        getProjectImages: function(){
+
+            var htmlToAppend = '';
+
+            htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">Functionality not yet implemented.</div>'; 
+
+            return htmlToAppend;
         },
 
         games: function(){
