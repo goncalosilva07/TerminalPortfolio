@@ -523,11 +523,42 @@
 
         getProjectImages: function(){
 
+            return new Promise(function(resolve, reject) {
+                var htmlToAppend = '';
+
+                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">'; 
+
+                    $.ajax({
+                        url: "https://api.github.com/repos/" + terminal.gitHubAccount + "/" + terminal.projectName + "/readme",
+                        headers: {
+                            "Accept": "application/vnd.github.v3.raw"
+                        },
+                        success: function(data) {
+                            debugger;
+                            const imageRegex = /!\[.*?\]\((.*?)\)/g;
+                            let match;
+                            while ((match = imageRegex.exec(data)) !== null) {
+                                const imageUrl = match[1];
+                                console.log("Imagem encontrada:", imageUrl);
+                                htmlToAppend += '<img src="https://raw.githubusercontent.com/goncalosilva07/TerminalPortfolio/main/' + imageUrl + '" alt="Imagem do projeto" style="width: 50%;">';
+                                htmlToAppend += '</div>';
+                                resolve(htmlToAppend);
+                            }
+                        }
+                    });
+            });
+
+
+
+
+
+            /*
             var htmlToAppend = '';
 
             htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">Functionality not yet implemented.</div>'; 
 
             return htmlToAppend;
+            */
         },
 
         games: function(){
