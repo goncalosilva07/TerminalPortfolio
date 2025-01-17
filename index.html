@@ -541,9 +541,9 @@
                                 const imageUrl = match[1];
                                 console.log("Imagem encontrada:", imageUrl);
                                 htmlToAppend += '<img src="https://raw.githubusercontent.com/goncalosilva07/TerminalPortfolio/main/' + imageUrl + '" alt="Imagem do projeto" style="width: 50%;">';
-                                htmlToAppend += '</div>';
-                                resolve(htmlToAppend);
+                                htmlToAppend += '</div>';                              
                             }
+                            resolve(htmlToAppend);
                         }
                     });
             });
