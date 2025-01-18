@@ -526,7 +526,7 @@
             return new Promise(function(resolve, reject) {
                 var htmlToAppend = '';
 
-                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">'; 
+                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; color: white">'; 
 
                     $.ajax({
                         url: "https://api.github.com/repos/" + terminal.gitHubAccount + "/" + terminal.projectName + "/readme",
@@ -534,15 +534,22 @@
                             "Accept": "application/vnd.github.v3.raw"
                         },
                         success: function(data) {
-                            debugger;
-                            const imageRegex = /!\[.*?\]\((.*?)\)/g;
-                            let match;
+
+                            const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
+                            var match;
+
                             while ((match = imageRegex.exec(data)) !== null) {
-                                const imageUrl = match[1];
-                                console.log("Imagem encontrada:", imageUrl);
-                                htmlToAppend += '<img src="https://raw.githubusercontent.com/goncalosilva07/TerminalPortfolio/main/' + imageUrl + '" alt="Imagem do projeto" style="width: 50%;">';
-                                htmlToAppend += '</div>';                              
+                                const text = match[1];   
+                                const imageUrl = match[2];                 
+                                htmlToAppend += '<span style="margin-top: 30px;margin-bottom: -12px; z-index: 1; font-weight: 700; font-size: large; text-shadow: 7px 7px #192734"> > ' + text + '</span>';
+                                htmlToAppend += '<img src="https://raw.githubusercontent.com/' + terminal.gitHubAccount + '/' + terminal.projectName + '/main/' + imageUrl + '" alt="Imagem do projeto" style="width: 500px;">';                                                                  
                             }
+                            htmlToAppend += '</div>'; 
+                            resolve(htmlToAppend);
+                        },
+                        error: function(data) {
+                            htmlToAppend += 'Project Images not found';
+                            htmlToAppend += '</div>';
                             resolve(htmlToAppend);
                         }
                     });
