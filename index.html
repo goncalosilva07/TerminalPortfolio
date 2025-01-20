@@ -12,6 +12,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!--Firebase-->
+    <script type="module" src="./js/config.js"></script>
+    
 </head>
 <style>
     input {
@@ -204,26 +208,16 @@
                     <span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span>
                     <input class="active" type="text" style="color: white;" autofocus>
                 </div>
-
-
-               <!--
-                
-                <div class="game" style="width: 100%; display: inline-flex;">
-
-                    <div id="ball"></div>
-                    <div id="spaceship"></div>
-
-                </div>
-                -->
-
-
             </div>
         </div>
     </div>
 </body>
 </html>
-<script>
-    var terminal = {
+<script type="module">
+
+    import { db, ref, push, get, auth, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from './js/config.js';
+
+    var terminal = {  
         //game pong
         gameMode: false,
         gameModeInitial: true,
@@ -235,10 +229,109 @@
         //projects
         gitHubAccount: "goncalosilva07",
         projectName: null,
+        //login
+        isLogin: 0,
 
-        
+        loginForm: function() {
+            var htmlToAppend = '';
+            htmlToAppend += '<div style="margin-right: 30px;  margin-top: 15px; color: white">'; 
+            htmlToAppend += '<span style="color: white;">email: </span><input class="login_email active" type="text" style="color: white;"><br>';
+            htmlToAppend += '<span style="color: white;">password: </span><input class="login_pass active" type="text" style="color: white;"><br>';
+            htmlToAppend += '<span style="color: white;">Press ENTER to conitnue...</span>';
+            htmlToAppend += '</div>';
+
+            return htmlToAppend;   
+        },
+
+        login: function (email, password){
+            signInWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        //login com sucesso
+                        const user = userCredential.user;  
+                        alert('Login successfully');     
+                    })
+                    .catch((error) => {
+                        alert(error);  
+                    });      
+        },
+
+        visitsList: async function (){
+            return new Promise(async function(resolve, reject) {
+
+                var htmlToAppend = '';
+                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">'; 
+
+                const visitsRef = ref(db, 'visits');
+
+                // Obter os dados da referência
+                get(visitsRef)
+                .then(async (snapshot) => {
+                    if (snapshot.exists()) {
+                        for(const values in snapshot.val()){
+                            const value = snapshot.val()[values];
+                            await $.ajax({
+                                url: 'https://get.geojs.io/v1/ip/geo/' + value.ip + '.json',
+                                method: 'GET',
+                                success: function(data) {
+                                    htmlToAppend += '> ' + value.ip + ' (' + data.country + ', ' + data.region + ') -> ' + value.date + ' ' + value.time + '<br>';
+                                },
+                                error: function(error) {
+                                    htmlToAppend += '> ' + value.ip + ' -> ' + value.date + ' ' + value.time + '<br>';
+                                }
+                            });
+                        }
+
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend);
+                    } else {
+                        htmlToAppend += 'No data to show.';
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend);
+                    }
+                })
+                .catch((error) => {
+                    htmlToAppend += error;
+                    htmlToAppend += '</div>';
+                    resolve(htmlToAppend);
+                });
+            });
+
+        },
+
+        newVisit: function (userIP) {
+            debugger;
+            const visitRef = ref(db, 'visits');  // Criando referência para "visits"
+            const now = new Date();
+
+            const visit = {
+                date: now.toLocaleDateString(),
+                time: now.toLocaleTimeString(),
+                ip: userIP  // Aqui você pode adicionar o IP se quiser
+            };
+
+            // Guardar dados no Firebase Realtime Database
+            push(visitRef, visit)
+                .then(() => console.log('Dados guardados com sucesso!'))
+                .catch((error) => console.error('Erro ao guardar dados:', error));
+        },
+
+        getUserIP: function () {
+            $.get("https://api.ipify.org?format=json", function(data) {
+                debugger;
+                const userIP = data.ip;
+                terminal.newVisit(userIP);
+            });
+        },
+
         enter: async function(command){
- 
+
+            if (terminal.isLogin == 1){    
+                terminal.login($(".login_email").val(), $(".login_pass").val());
+                terminal.isLogin = 0;
+                terminal.enter("clear");
+                return true;  
+            }
+
             //
             $(".inputActiveDiv").remove();
             var htmlToAppend = $(".terminalBody").html();
@@ -269,6 +362,12 @@
 
                 $(".terminalBody").html(htmlToAppend);
                 terminal.pongGameInitialData();                
+            } else if (returnData == "login"){
+                terminal.isLogin = 1;
+                htmlToAppend += terminal.loginForm();
+                $(".terminalBody").html(htmlToAppend);
+                $(".active").focus();
+                $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);
             } else {
                 htmlToAppend += returnData;
                 htmlToAppend += '<div style="margin-top: 20px; margin-bottom: 20px;" class="inputActiveDiv">' +
@@ -277,7 +376,7 @@
                                 ' </div>';
             }
 
-            if (returnData != "pong game"){
+            if (returnData != "pong game" && returnData != "login"){
                 $(".terminalBody").html(htmlToAppend);
                 //$(".terminalBody").scrollTop($(".terminalBody")[0].scrollHeight);  // Auto-scroll to the bottom
                 $(".active").focus();
@@ -313,6 +412,10 @@
                     return terminal.getProjectDesc();
                 case "p i":
                     return terminal.getProjectImages();
+                case "visit-list":
+                    return terminal.visitsList();
+                case "login":
+                    return "login";
                 default:
                     return '<span style="color: white;">"' + command + '" is not recognized as an internal command.</span>';
             }          
@@ -554,18 +657,6 @@
                         }
                     });
             });
-
-
-
-
-
-            /*
-            var htmlToAppend = '';
-
-            htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">Functionality not yet implemented.</div>'; 
-
-            return htmlToAppend;
-            */
         },
 
         games: function(){
@@ -696,6 +787,14 @@
     };
     $(document).ready(function () {
 
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("Utilizador autenticado:", user.uid);
+            } else {
+                terminal.getUserIP();
+            }
+        });
+
         $(".closeTerminal").on("click", function (e) {
             window.close();
         });
@@ -757,6 +856,5 @@
             }
         });
         
-       
     });
 </script>
