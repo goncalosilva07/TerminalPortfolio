@@ -187,8 +187,79 @@
         color: #192734;
     }
 
+    
+
+    /* Estilo do alerta CMD */
+    .cmd-alert {
+        display: flex; /* Flexbox para alinhamento */
+        position: absolute;
+        align-items: center; /* Centraliza verticalmente */
+        padding: 15px; /* Espaço interno do alerta */
+        margin: 20px auto; /* Centraliza o alerta na página */
+        background-color: #1e1e1e; /* Fundo escuro */
+    
+        border-radius: 5px; /* Cantos arredondados */
+        max-width: 600px; /* Largura máxima */
+        width: 90%; /* Largura responsiva */
+        font-size: 1.1em; /* Tamanho de fonte levemente maior */
+    }
+
+    /* Estilo do ícone CMD */
+    .cmd-icon {
+        font-weight: bold; /* Negrito para o ícone */
+        margin-right: 10px; /* Espaço entre ícone e texto */
+    }
+
+    /* Estilo do conteúdo do alerta */
+    .cmd-content {
+        flex: 1; /* Ocupa o espaço restante */
+        color: white;
+    }
+
+
+    /* CSS */
+    .button-54 {
+        font-family: "Open Sans", sans-serif;
+        font-size: 16px;
+        letter-spacing: 2px;
+        text-decoration: none;
+        text-transform: uppercase;
+        color: #000;
+        cursor: pointer;
+        border: 3px solid;
+        padding: 0.25em 0.5em;
+        box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+        position: relative;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    .button-54:active {
+        box-shadow: 0px 0px 0px 0px;
+        top: 5px;
+        left: 5px;
+    }
+
+    @media (min-width: 768px) {
+        .button-54 {
+            padding: 0.25em 0.75em;
+        }
+    }
+
+
 </style>
 <body style="background-color: pink;">
+
+    <div id="cmdAlert" class="cmd-alert" style=" margin-left: 34%;">
+        <span class="cmd-icon">C:\></span>
+        <div class="cmd-content">
+            
+        </div>
+
+        <button id="closeAlert" class="button-54" role="button">Ok</button>
+    </div>
+
     <div class="container">
         <div class="terminal">
             <div class="header">
@@ -208,6 +279,7 @@
                     <span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span>
                     <input class="active" type="text" style="color: white;" autofocus>
                 </div>
+
             </div>
         </div>
     </div>
@@ -231,6 +303,124 @@
         projectName: null,
         //login
         isLogin: 0,
+        //feedback
+        isFeedback: 0,
+
+        sendEmail: function (title, description){
+
+            const emailData = {
+                    sender: { name: "TerminalPortfolio", email: "goncalosilva2205@gmail.com" },
+                    to: [{ email: "goncalo7878s@gmail.com", name: "Gonçalo Silva" }],
+                    subject: "Teste de E-mail com Brevo",
+                    htmlContent: "<h1>New Feedback!</h1><h3>New feedback has been submitted on TerminalPortfolio.</h3><br><strong>Title: </strong><span>" + title + "</span><br><strong>Description: </strong><span>" + description + "</span>"
+                };
+
+            $.ajax({
+                url: "https://api.brevo.com/v3/smtp/email",
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "api-key": "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"
+                },
+                data: JSON.stringify(emailData),
+                success: function (response) {
+                    console.log("E-mail enviado com sucesso!", response);
+                },
+                error: function (error) {
+                    console.error("Erro ao enviar o e-mail:", error);
+                }
+            });            
+
+        },
+
+        showAlert: function(message) {
+            $(".cmd-content").html(message);
+            $("#cmdAlert").fadeIn(1000);
+            setTimeout(function() { terminal.closeAlert(); }, 5000);
+        },
+
+        closeAlert: function(message){
+            $("#cmdAlert").fadeOut(1000);
+        },
+
+        feedbackList: async function (){
+            return new Promise(async function(resolve, reject) {
+
+                var htmlToAppend = '';
+                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">'; 
+
+                const feedbacksRef = ref(db, 'feedbacks');
+
+                get(feedbacksRef)
+                .then(async (snapshot) => {
+                    if (snapshot.exists()) {
+                        for(const values in snapshot.val()){
+                            const value = snapshot.val()[values];
+                            htmlToAppend += '<div style="margin-top:10px"> --------------------------- <br>' +
+                                            '<span>' + value.date + ' ' + value.time + '</span><br>' +
+                                            '<span>Title: ' + value.title + '</span><br>' +
+                                            '<span>Description: ' + value.description + '</span>' +
+                                            '</div> ---------------------------';
+                            
+                        }
+
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend);
+                    } else {
+                        htmlToAppend += 'No data to show.';
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend);
+                    }
+                })
+                .catch((error) => {
+                    htmlToAppend += error;
+                    htmlToAppend += '</div>';
+                    resolve(htmlToAppend);
+                });
+            });
+
+        },
+
+        newFeedback: function (title, description) {
+
+            const feedbackRef = ref(db, 'feedbacks');
+            const now = new Date();
+
+            const feedback = {
+                date: now.toLocaleDateString(),
+                time: now.toLocaleTimeString(),
+                title: title,
+                description: description
+            };
+
+            push(feedbackRef, feedback)
+                .then(() => {
+                    terminal.showAlert('Feedback submitted successfully'); 
+                    terminal.sendEmail(title, description);
+                })
+                .catch((error) => terminal.showAlert(error));
+        },
+
+        feedbackForm: function(){
+            var htmlToAppend = '';
+            htmlToAppend += '<div style="margin-right: 30px;  margin-top: 15px; color: white">'; 
+            htmlToAppend += '<span style="color: white;">title: </span><input class="feedback_title active" type="text" style="color: white;"><br>';
+            htmlToAppend += '<span style="color: white;">description: </span><input class="feedback_description active" type="text" style="color: white;"><br>';
+            htmlToAppend += '<span style="color: white;">Press ENTER to conitnue...</span>';
+            htmlToAppend += '</div>';
+
+            return htmlToAppend;   
+        },
+
+        contacts: function(){
+            var contacts = {'email':'goncalo7878s@gmail.com', 'linkedin': 'www.linkedin.com/in/gonçalo-silva-8b89a91a0', 
+                      'gitHub': 'https://github.com/goncalosilva07'},
+            htmlToAppend = "";
+            $.each(contacts, function(index, value){
+                htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
+            });
+            return htmlToAppend;
+        },
 
         loginForm: function() {
             var htmlToAppend = '';
@@ -248,10 +438,12 @@
                     .then((userCredential) => {
                         //login com sucesso
                         const user = userCredential.user;  
-                        alert('Login successfully');     
+                        //alert('Login successfully');   
+                        terminal.showAlert('Login successfully');  
                     })
                     .catch((error) => {
-                        alert(error);  
+                        //alert(error);
+                        terminal.showAlert(error);   
                     });      
         },
 
@@ -332,6 +524,13 @@
                 return true;  
             }
 
+            if (terminal.isFeedback == 1){    
+                terminal.newFeedback($(".feedback_title").val(), $(".feedback_description").val());
+                terminal.isFeedback = 0;
+                terminal.enter("clear");
+                return true;  
+            }
+
             //
             $(".inputActiveDiv").remove();
             var htmlToAppend = $(".terminalBody").html();
@@ -368,6 +567,12 @@
                 $(".terminalBody").html(htmlToAppend);
                 $(".active").focus();
                 $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);
+            }else if (returnData == "feedback"){
+                terminal.isFeedback = 1;
+                htmlToAppend += terminal.feedbackForm();
+                $(".terminalBody").html(htmlToAppend);
+                $(".active").focus();
+                $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);
             } else {
                 htmlToAppend += returnData;
                 htmlToAppend += '<div style="margin-top: 20px; margin-bottom: 20px;" class="inputActiveDiv">' +
@@ -390,6 +595,8 @@
                     return terminal.helpCommands();
                 case "dir":
                     return terminal.dirCommands();
+                case "contacts":
+                    return terminal.contacts();
                 case "cd about":
                     return terminal.cdAbout();
                     break;
@@ -414,8 +621,12 @@
                     return terminal.getProjectImages();
                 case "visit-list":
                     return terminal.visitsList();
+                case "feedback-list":
+                    return terminal.feedbackList();
                 case "login":
                     return "login";
+                case "feedback":
+                    return "feedback";
                 default:
                     return '<span style="color: white;">"' + command + '" is not recognized as an internal command.</span>';
             }          
@@ -425,7 +636,8 @@
             var help = {'clear':'Clear the terminal', 'dir':'List portfolio sections. Let\'s see what\'s here... Spoiler: nothing classified!', 
             'cd [section]': 'Change to the specified section. Ex: cd about.', 'games':'Show all the games! (Caution: Highly addictive content ahead)',
             'game [game_name]': 'Ready to play? Choose your game and let\'s get started!',
-            'p d [project_name]': 'Curious? This is your backstage pass to all the juicy project info.', 'p i [project_name]': 'For the curious and the skeptical. Here’s what the project looks like!'},
+            'p d [project_name]': 'Curious? This is your backstage pass to all the juicy project info.', 'p i [project_name]': 'For the curious and the skeptical. Here’s what the project looks like!',
+            'contacts':'Slide into my DMs. Or, you know, email.', 'feedback':'Your thoughts, my growth. Let’s hear it!'},
             htmlToAppend = "";
             $.each(help, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -787,6 +999,8 @@
     };
     $(document).ready(function () {
 
+        $("#cmdAlert").hide();
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 console.log("Utilizador autenticado:", user.uid);
@@ -798,6 +1012,11 @@
         $(".closeTerminal").on("click", function (e) {
             window.close();
         });
+
+        $("#closeAlert").on("click", function (e) {
+            terminal.closeAlert();
+        });
+
 
         $(document).on('keydown', '.active', function(e) {
             if (e.which == 13) {      
