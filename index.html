@@ -308,29 +308,24 @@
 
         sendEmail: function (title, description){
 
-            const emailData = {
-                    sender: { name: "TerminalPortfolio", email: "goncalosilva2205@gmail.com" },
-                    to: [{ email: "goncalo7878s@gmail.com", name: "Gonçalo Silva" }],
-                    subject: "Teste de E-mail com Brevo",
-                    htmlContent: "<h1>New Feedback!</h1><h3>New feedback has been submitted on TerminalPortfolio.</h3><br><strong>Title: </strong><span>" + title + "</span><br><strong>Description: </strong><span>" + description + "</span>"
-                };
+            const data = {
+                name: 'Gonçalo Silva',
+                email: 'goncalo7878s@gmail.com',
+                message: 'Title: ' + title + '. Description: ' + description
+            };
 
             $.ajax({
-                url: "https://api.brevo.com/v3/smtp/email",
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "api-key": "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"
-                },
-                data: JSON.stringify(emailData),
+                url: 'https://formspree.io/f/xpwqavjb', // Substitui "teuID" pelo ID gerado pelo Formspree
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
                 success: function (response) {
-                    console.log("E-mail enviado com sucesso!", response);
+                    console.log('E-mail enviado com sucesso:', response);
                 },
                 error: function (error) {
-                    console.error("Erro ao enviar o e-mail:", error);
-                }
-            });            
-
+                    console.error('Erro ao enviar o e-mail:', error);
+                },
+            });
         },
 
         showAlert: function(message) {
