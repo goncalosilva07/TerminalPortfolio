@@ -18,6 +18,11 @@
     
 </head>
 <style>
+
+    body {
+        cursor: url('images/cursor.png'), pointer;
+    }
+
     input {
         background: transparent;
         border: none;
@@ -398,9 +403,19 @@
 
         feedbackForm: function(){
             var htmlToAppend = '';
-            htmlToAppend += '<div style="margin-right: 30px;  margin-top: 15px; color: white">'; 
+
+            htmlToAppend += '<div style="margin-right: 30px; margin-top: 15px;">' +
+                            '<div style="margin-top: 15px; margin-bottom: 30px;">' +
+                            '<img src="images/feedback.png" width="30%">' +
+                            '</div>'; 
+
+
+            htmlToAppend += '<div class="dashed-border-leftAndRight" style="width: 30%;">';
+            htmlToAppend += '<div class=" dashed-border-topAndBottom" style="padding: 10px;">';    
             htmlToAppend += '<span style="color: white;">title: </span><input class="feedback_title active" type="text" style="color: white;"><br>';
             htmlToAppend += '<span style="color: white;">description: </span><input class="feedback_description active" type="text" style="color: white;"><br>';
+            htmlToAppend += '</div>';
+            htmlToAppend += '</div>';
             htmlToAppend += '<span style="color: white;">Press ENTER to conitnue...</span>';
             htmlToAppend += '</div>';
 
