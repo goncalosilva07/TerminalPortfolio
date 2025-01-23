@@ -311,6 +311,31 @@
         //feedback
         isFeedback: 0,
 
+        download: function (){
+
+            const fileName = "cv.pdf"; // Nome do ficheiro
+            const filePath = "downloads/" + fileName; // Caminho do ficheiro
+            
+            // Criar um link para o download
+            const link = document.createElement("a");
+            link.href = filePath;
+            link.download = fileName;
+            link.style.display = "none";
+
+            // Adicionar ao DOM, clicar no link e remover
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            var htmlToAppend = '<div style="margin-right: 30px; margin-top: 15px; color: white">';
+            htmlToAppend += '<span>Downloading...</span>';
+            htmlToAppend += '</div>';
+
+            terminal.sendEmail('Downloading CV', '-');
+
+            return htmlToAppend;
+        },
+
         sendEmail: function (title, description){
 
             const data = {
@@ -409,11 +434,10 @@
                             '<img src="images/feedback.png" width="30%">' +
                             '</div>'; 
 
-
             htmlToAppend += '<div class="dashed-border-leftAndRight" style="width: 30%;">';
             htmlToAppend += '<div class=" dashed-border-topAndBottom" style="padding: 10px;">';    
-            htmlToAppend += '<span style="color: white;">title: </span><input class="feedback_title active" type="text" style="color: white;"><br>';
-            htmlToAppend += '<span style="color: white;">description: </span><input class="feedback_description active" type="text" style="color: white;"><br>';
+            htmlToAppend += '<span style="color: white;">title: </span><input class="feedback_title active" type="text" style="color: white; width: 79%;"><br>';
+            htmlToAppend += '<span style="color: white;">description: </span><input class="feedback_description active" type="text" style="color: white; width: 63%;"><br>';
             htmlToAppend += '</div>';
             htmlToAppend += '</div>';
             htmlToAppend += '<span style="color: white;">Press ENTER to conitnue...</span>';
@@ -434,9 +458,17 @@
 
         loginForm: function() {
             var htmlToAppend = '';
-            htmlToAppend += '<div style="margin-right: 30px;  margin-top: 15px; color: white">'; 
+            htmlToAppend += '<div style="margin-right: 30px; margin-top: 15px;">' +
+                            '<div style="margin-top: 15px; margin-bottom: 30px;">' +
+                            '<img src="images/login.png" width="25%">' +
+                            '</div>'; 
+
+            htmlToAppend += '<div class="dashed-border-leftAndRight" style="width: 30%;">';
+            htmlToAppend += '<div class=" dashed-border-topAndBottom" style="padding: 10px;">';    
             htmlToAppend += '<span style="color: white;">email: </span><input class="login_email active" type="text" style="color: white;"><br>';
             htmlToAppend += '<span style="color: white;">password: </span><input class="login_pass active" type="text" style="color: white;"><br>';
+            htmlToAppend += '</div>';
+            htmlToAppend += '</div>';
             htmlToAppend += '<span style="color: white;">Press ENTER to conitnue...</span>';
             htmlToAppend += '</div>';
 
@@ -637,6 +669,8 @@
                     return "login";
                 case "feedback":
                     return "feedback";
+                case "download":
+                    return terminal.download();
                 default:
                     return '<span style="color: white;">"' + command + '" is not recognized as an internal command.</span>';
             }          
@@ -647,7 +681,8 @@
             'cd [section]': 'Change to the specified section. Ex: cd about.', 'games':'Show all the games! (Caution: Highly addictive content ahead)',
             'game [game_name]': 'Ready to play? Choose your game and let\'s get started!',
             'p d [project_name]': 'Curious? This is your backstage pass to all the juicy project info.', 'p i [project_name]': 'For the curious and the skeptical. Here’s what the project looks like!',
-            'contacts':'Slide into my DMs. Or, you know, email.', 'feedback':'Your thoughts, my growth. Let’s hear it!'},
+            'contacts':'Slide into my DMs. Or, you know, email.', 'feedback':'Your thoughts, my growth. Let’s hear it!',
+            'download':'My CV! Download it. Frame it. Admire it.'},
             htmlToAppend = "";
             $.each(help, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
