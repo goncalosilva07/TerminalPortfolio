@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminal Portfolio</title>
 
+    <link rel="icon" type="image/x-icon" href="images/favicon.png">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -947,7 +949,11 @@
         pongGameInitialData: function(){
             terminal.gameMode = true;
             terminal.pongWaitTime();   
-            terminal.ballDirectionX = terminal.ballInitialShotRandomize();   
+            terminal.ballDirectionX = terminal.ballInitialShotRandomize(); 
+
+            var htmlToAppend =  $(".game").html();
+            htmlToAppend += '<div style="color:white; position:absolute; padding: 10px;">Score: <span id="scorePong">0</span></div>';
+            $(".game").html(htmlToAppend);
         },
 
         ballMovement: function(){
@@ -976,8 +982,6 @@
 
             if(((ballY + ballHeight) >= spaceshipY && (spaceshipY + spaceshipHeight) >= (ballY + ballHeight)) && (ballX >=spaceshipX && ballX <= (spaceshipX + $("#spaceship").width()))){
         
-                debugger;
-
                 var racketHalf = (spaceshipX + (spaceshipWidth / 2));
                 var ballTouchPoint = (ballX + (ballWidth / 2));
 
@@ -991,6 +995,8 @@
                 terminal.ballDirectionY = -1;
                 terminal.ballTouches += 1;
                 ballTouchesTemp = terminal.ballTouches;
+
+                $('#scorePong').html(ballTouchesTemp);
             }
             
             if (ballY <= maxHeight){
@@ -1021,6 +1027,8 @@
                 //terminal.enter("pong game");
                 terminal.pongWaitTime();
                 terminal.ballDirectionX = terminal.ballInitialShotRandomize();
+                ballTouchesTemp = 0;
+                $('#scorePong').html(ballTouchesTemp);
                 
             }else{
                 $('#ball').css('left', ballX + (terminal.ballSpeed * terminal.ballDirectionX));
@@ -1041,6 +1049,7 @@
 
             return shotAngle;
         },
+    
     };
     $(document).ready(function () {
 
@@ -1053,7 +1062,7 @@
                 terminal.getUserIP();
             }
         });
-
+       
         $(".closeTerminal").on("click", function (e) {
             window.close();
         });
@@ -1061,7 +1070,6 @@
         $("#closeAlert").on("click", function (e) {
             terminal.closeAlert();
         });
-
 
         $(document).on('keydown', '.active', function(e) {
             if (e.which == 13) {      
@@ -1107,7 +1115,6 @@
                         $('#spaceship').css('left', newPosition);
                     }
                 }
-
 
                 if (!(((spaceShipPosition + $("#spaceship").width() - 22) + valueToMove) >= maxWidth)){
                     if (e.which == 39) {                
