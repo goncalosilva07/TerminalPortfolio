@@ -313,6 +313,36 @@
         //feedback
         isFeedback: 0,
 
+        quote: function(){
+
+            return new Promise(function(resolve, reject) {
+                var htmlToAppend = '';
+
+                htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px; color: white">'; 
+
+                $.ajax({
+                    url: 'https://api.quotable.io/quotes/random?tags=failure|courage|faith|success|inspirational|honor|future',
+                    type: 'GET',
+                    contentType: "application/json",
+                    data: null,
+                    success: function (data) {
+                        debugger;
+                        htmlToAppend += '<span style="font-weight: 500;">[' + data[0].tags + ']</span><br>';
+                        //htmlToAppend += '<span style="font-weight: 500;">"' + data[0].content + '" - '+ data[0].author + '</span>';
+                        htmlToAppend += '<span style="font-weight: 500;">"' + data[0].content + '"</span> - ' + data[0].author;
+                        //htmlToAppend += data.description == null ? 'Project without description' : data.description;
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend); 
+                    },
+                    error: function (data) {
+                        htmlToAppend += 'Project not found';
+                        htmlToAppend += '</div>';
+                        resolve(htmlToAppend); 
+                    }
+                });
+            });
+        },
+
         download: function (){
 
             const fileName = "cv.pdf"; // Nome do ficheiro
@@ -347,7 +377,7 @@
             };
 
             $.ajax({
-                url: 'https://formspree.io/f/xpwqavjb', // Substitui "teuID" pelo ID gerado pelo Formspree
+                url: 'https://formspree.io/f/xpwqavjb',
                 method: 'POST',
                 data: JSON.stringify(data),
                 contentType: 'application/json',
@@ -439,7 +469,7 @@
             htmlToAppend += '<div class="dashed-border-leftAndRight" style="width: 30%;">';
             htmlToAppend += '<div class=" dashed-border-topAndBottom" style="padding: 10px;">';    
             htmlToAppend += '<span style="color: white;">title: </span><input class="feedback_title active" type="text" style="color: white; width: 79%;"><br>';
-            htmlToAppend += '<span style="color: white;">description: </span><input class="feedback_description active" type="text" style="color: white; width: 63%;"><br>';
+            htmlToAppend += '<span style="color: white;">description: </span><input class="feedback_description active" type="text" style="color: white; width: 62%;"><br>';
             htmlToAppend += '</div>';
             htmlToAppend += '</div>';
             htmlToAppend += '<span style="color: white;">Press ENTER to conitnue...</span>';
@@ -535,7 +565,7 @@
         },
 
         newVisit: function (userIP) {
-            debugger;
+            
             const visitRef = ref(db, 'visits');  // Criando referência para "visits"
             const now = new Date();
 
@@ -553,7 +583,7 @@
 
         getUserIP: function () {
             $.get("https://api.ipify.org?format=json", function(data) {
-                debugger;
+                
                 const userIP = data.ip;
                 terminal.newVisit(userIP);
             });
@@ -671,8 +701,10 @@
                     return "login";
                 case "feedback":
                     return "feedback";
-                case "download":
+                case "download cv":
                     return terminal.download();
+                case "quote":
+                    return terminal.quote();
                 default:
                     return '<span style="color: white;">"' + command + '" is not recognized as an internal command.</span>';
             }          
@@ -684,7 +716,7 @@
             'game [game_name]': 'Ready to play? Choose your game and let\'s get started!',
             'p d [project_name]': 'Curious? This is your backstage pass to all the juicy project info.', 'p i [project_name]': 'For the curious and the skeptical. Here’s what the project looks like!',
             'contacts':'Slide into my DMs. Or, you know, email.', 'feedback':'Your thoughts, my growth. Let’s hear it!',
-            'download':'My CV! Download it. Frame it. Admire it.'},
+            'download cv':'My CV! Download it. Frame it. Admire it.', 'quote':'Because sometimes you just need someone else\'s words.'},
             htmlToAppend = "";
             $.each(help, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
@@ -733,10 +765,10 @@
                          ['Data Base', {'SQL': ['[##############------]', '70%'], 'MySQL': ['[##############------]', '70%']}],
                          ['Mobile Development', {'Android Studio': ['[##############------]', '70%']}]];
 
-            debugger;
+            
 
             $.each(skills, function( index, value ) {
-                debugger;
+                
                 htmlToAppend += '<div class="dashed-border-leftAndRight" style="margin-top: 20px; margin-left:40px;">' +
                                 '<div class="dashed-border-topAndBottom" style="padding: 10px;">' +
                                 '<span style="color: limegreen;">[' + value[0] + ']</span>' +
@@ -745,7 +777,7 @@
                                 '<table>';
 
                 $.each(value[1], function(skillName, skillDescription){
-                    debugger;
+                    
                     htmlToAppend += '<tr>'+
                                     '<th style="color: deeppink;">' + skillName + ':</th>'+
                                     '<td>' + skillDescription[0] + '</td>'+
@@ -779,7 +811,7 @@
                 'This course has been an incredible adventure, equipping me with the skills and knowledge I need for a promising career in software development.' , [
                 'Higher education in software development, with an emphasis on programming languages, web development, databases, and software engineering.',
                 'Practical experience in individual and group projects, including internships in industry-related companies.',
-                ' Skills acquired in programming (Kotlin, Java, Python), web development (HTML, CSS, JavaScript), databases (MySQL), and agile development methodologies.']]};
+                ' Skills acquired in programming (Kotlin, PHP, Python), web development (HTML, CSS, JavaScript, JQuery), databases (MySQL), and agile development methodologies.']]};
 
 
             htmlToAppend += '<div style="margin-right: 30px; display: inline-grid; margin-top: 15px;">' +
@@ -788,7 +820,7 @@
                             '</div>'; 
 
             $.each(education, function(indexDic, valDic){
-                debugger;
+                
                 htmlToAppend += '<span>' + valDic[0] + '</span>';
 
                 htmlToAppend += '<div class="dashed-border-leftAndRight" style="margin-top: 20px; margin-left:40px;">' +
@@ -799,7 +831,7 @@
                                 '<table class="educationTable">';
 
                 $.each(valDic[1], function(indexArray, valArray){
-                    debugger;
+                    
                     htmlToAppend += '<tr>' +
                                     '<th>+</th>' +
                                     '<td>' + valArray + '</td>' +                                                   
@@ -868,7 +900,7 @@
                     contentType: "application/json",
                     data: null,
                     success: function (data) {
-                        debugger;
+                        
                         htmlToAppend += '<span style="font-weight: 500;"> > ' + data.name + '</span><br>';
                         htmlToAppend += data.description == null ? 'Project without description' : data.description;
                         htmlToAppend += '</div>';
@@ -1086,7 +1118,7 @@
                                        '<input class="active" type="text" style="color: white;" autofocus>' + 
                                        '</div>';
 
-                    debugger;
+                    
                     clearInterval((terminal.interval));
                     terminal.gameMode = false;
                     terminal.gameModeInitial = true;
