@@ -577,7 +577,9 @@
 
             // Guardar dados no Firebase Realtime Database
             push(visitRef, visit)
-                .then(() => console.log('Dados guardados com sucesso!'))
+                .then(() => {
+                    terminal.sendEmail('New Visit', visit.date + ' ' + visit.time);
+                })
                 .catch((error) => console.error('Erro ao guardar dados:', error));
         },
 
