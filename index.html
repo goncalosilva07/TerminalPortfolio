@@ -15,247 +15,12 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+    <link rel="stylesheet" href="css/style.css" />
+    
     <!--Firebase-->
     <script type="module" src="./js/config.js"></script>
     
 </head>
-<style>
-
-    body {
-        cursor: url('images/cursor.png'), pointer;
-    }
-
-    input {
-        background: transparent;
-        border: none;
-    }
-
-    input:focus {
-        outline: none;
-    }   
-
-    .closeTerminal:hover {
-        cursor: pointer;
-    }
-
-    span {
-        color: white;
-    }
-
-    ::-webkit-scrollbar {
-        width: 15px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #888;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
-
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .terminal {
-        background-color: #192734;
-        height: 75vh;
-        width: 100%;
-        border-radius: 4px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .header {
-        background-color: azure;
-        min-height: 33px;
-        display: flex;
-        align-items: center;
-        padding: 0 5px;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-
-    .terminalBody {
-        font-family: 'IBM Plex Mono', monospace;
-        padding-left: 15px;
-        overflow-y: auto;
-        margin-left: 5px;
-        display: inline-grid;
-    }
-
-    .colorAbout {
-        /*color: limegreen;*/
-        color: white;
-    }
-
-    /*
-    .imgMeAbout {
-        border: 2px limegreen solid;
-        border-right: 2px deeppink solid;
-        border-top: 2px deeppink solid;
-    }
-        */
-
-    .imgMeAbout {
-        border: 1px limegreen solid;
-    }
-
-    /*
-    .dashed-border-topAndBottom {
-        width: 100%;
-        height: 100%;
-        border-top: 1px solid transparent;
-        border-bottom: 1px solid transparent;
-        border-image: url(images/borderTopAndDown.png) 10000 0 repeat;
-    }
-    */
-
-
-    .dashed-border-topAndBottom {
-        width: 100%;
-        border-top: 1px solid transparent;
-        border-bottom: 1px solid transparent;
-        border-image: url(images/borderTopAndDown.png) 10000 0 repeat;
-    }
-
-    .dashed-border-leftAndRight {
-        width: 39%;
-        border-left: 1px solid transparent;
-        border-right: 1px solid transparent;
-        border-image: url(images/borderLeftAndRight.png) 1 10 repeat;
-    }
-
-    .dashed-border-bottom {
-        width: 100%;
-        border-bottom: 1px solid transparent;
-        border-image: url(images/borderTopAndDown.png) 10000 0 repeat;
-    }
-
-    th, td {
-        padding: 10px;
-        color: white;
-    }
-
-    .educationTable th {
-        color: deeppink;
-    }
-
-    #spaceship {
-        position: absolute;
-        left: 47.3%;
-        width: 100px;
-        height: 30px;
-        background-color: aliceblue;
-        bottom: 15vh;
-    }
-
-    #ball {
-        position: absolute;
-        left: 50%;
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        background-color: aliceblue;
-        /*bottom: 80vh;*/
-        top: 20%;
-    }
-
-    #countdown {
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 30vh;
-        font-size: 50px;
-        color: limegreen;
-    }
-
-    .headerName {
-        font-family: 'IBM Plex Mono', monospace;
-        margin-left: 5px;
-        font-size: 15px;
-        padding-top: 2px;
-        color: deeppink;
-    }
-
-    .headerSymbol {
-        color: deeppink;
-    }
-
-    .closeTerminal {
-        margin-left: auto; 
-        color: #192734;
-    }
-
-    
-
-    /* Estilo do alerta CMD */
-    .cmd-alert {
-        display: flex; /* Flexbox para alinhamento */
-        position: absolute;
-        align-items: center; /* Centraliza verticalmente */
-        padding: 15px; /* Espaço interno do alerta */
-        margin: 20px auto; /* Centraliza o alerta na página */
-        background-color: #1e1e1e; /* Fundo escuro */
-    
-        border-radius: 5px; /* Cantos arredondados */
-        max-width: 600px; /* Largura máxima */
-        width: 90%; /* Largura responsiva */
-        font-size: 1.1em; /* Tamanho de fonte levemente maior */
-    }
-
-    /* Estilo do ícone CMD */
-    .cmd-icon {
-        font-weight: bold; /* Negrito para o ícone */
-        margin-right: 10px; /* Espaço entre ícone e texto */
-    }
-
-    /* Estilo do conteúdo do alerta */
-    .cmd-content {
-        flex: 1; /* Ocupa o espaço restante */
-        color: white;
-    }
-
-
-    /* CSS */
-    .button-54 {
-        font-family: "Open Sans", sans-serif;
-        font-size: 16px;
-        letter-spacing: 2px;
-        text-decoration: none;
-        text-transform: uppercase;
-        color: #000;
-        cursor: pointer;
-        border: 3px solid;
-        padding: 0.25em 0.5em;
-        box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
-        position: relative;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-    }
-
-    .button-54:active {
-        box-shadow: 0px 0px 0px 0px;
-        top: 5px;
-        left: 5px;
-    }
-
-    @media (min-width: 768px) {
-        .button-54 {
-            padding: 0.25em 0.75em;
-        }
-    }
-
-
-</style>
 <body style="background-color: pink;">
 
     <div id="cmdAlert" class="cmd-alert" style=" margin-left: 34%;">
@@ -297,14 +62,15 @@
     import { db, ref, push, get, auth, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from './js/config.js';
 
     var terminal = {  
-        //game pong
+        //games
         gameMode: false,
-        gameModeInitial: true,
+        //game pong
         ballDirectionX: 1,
         ballDirectionY: 1,
         ballSpeed: 2,
         ballTouches: 0,
         interval: null,
+        gamePong: false,
         //projects
         gitHubAccount: "goncalosilva07",
         projectName: null,
@@ -325,12 +91,9 @@
                     type: 'GET',
                     contentType: "application/json",
                     data: null,
-                    success: function (data) {
-                        debugger;
+                    success: function (data) {    
                         htmlToAppend += '<span style="font-weight: 500;">[' + data[0].tags + ']</span><br>';
-                        //htmlToAppend += '<span style="font-weight: 500;">"' + data[0].content + '" - '+ data[0].author + '</span>';
                         htmlToAppend += '<span style="font-weight: 500;">"' + data[0].content + '"</span> - ' + data[0].author;
-                        //htmlToAppend += data.description == null ? 'Project without description' : data.description;
                         htmlToAppend += '</div>';
                         resolve(htmlToAppend); 
                     },
@@ -482,8 +245,12 @@
             var contacts = {'email':'goncalo7878s@gmail.com', 'linkedin': 'www.linkedin.com/in/gonçalo-silva-8b89a91a0', 
                       'gitHub': 'https://github.com/goncalosilva07'},
             htmlToAppend = "";
-            $.each(contacts, function(index, value){
-                htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
+            $.each(contacts, function(index, value){          
+                if (index == 'email'){
+                    htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
+                }else{
+                    htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - <a href="' + value + '">' + value + '</a></span>';
+                }
             });
             return htmlToAppend;
         },
@@ -985,7 +752,7 @@
             terminal.pongWaitTime();   
             terminal.ballDirectionX = terminal.ballInitialShotRandomize(); 
 
-            var htmlToAppend =  $(".game").html();
+            var htmlToAppend = $(".game").html();
             htmlToAppend += '<div style="color:white; position:absolute; padding: 10px;">Score: <span id="scorePong">0</span></div>';
             $(".game").html(htmlToAppend);
         },
@@ -1012,7 +779,7 @@
             //var maxWidth = $(".terminal").width() + (($(window).width() - $(".terminal").width()) / 2);
             var maxWidth = ($(".terminal").position().left + $(".terminal").width()) - 22;
             
-            var ballTouchesTemp = 0;
+            //var ballTouchesTemp = 0;
 
             if(((ballY + ballHeight) >= spaceshipY && (spaceshipY + spaceshipHeight) >= (ballY + ballHeight)) && (ballX >=spaceshipX && ballX <= (spaceshipX + $("#spaceship").width()))){
         
@@ -1028,9 +795,10 @@
                 //terminal.ballDirectionX = -1;
                 terminal.ballDirectionY = -1;
                 terminal.ballTouches += 1;
-                ballTouchesTemp = terminal.ballTouches;
+                //ballTouchesTemp += 1;
+                //ballTouchesTemp = terminal.ballTouches;
 
-                $('#scorePong').html(ballTouchesTemp);
+                $('#scorePong').html(terminal.ballTouches);
             }
             
             if (ballY <= maxHeight){
@@ -1061,16 +829,15 @@
                 //terminal.enter("pong game");
                 terminal.pongWaitTime();
                 terminal.ballDirectionX = terminal.ballInitialShotRandomize();
-                ballTouchesTemp = 0;
-                $('#scorePong').html(ballTouchesTemp);
+                terminal.ballTouches = 0;
+                $('#scorePong').html(terminal.ballTouches);
                 
             }else{
                 $('#ball').css('left', ballX + (terminal.ballSpeed * terminal.ballDirectionX));
                 $('#ball').css('top', ballY + (terminal.ballSpeed * terminal.ballDirectionY));
             }
 
-            if (((ballTouchesTemp % 5) == 0) && (ballTouchesTemp != 0)){
-                
+            if (((terminal.ballTouches % 5) == 0) && (terminal.ballTouches != 0)){
                 terminal.ballSpeed += 0.2;
             }
             
@@ -1112,7 +879,7 @@
         });
 
         $(document).keydown(function(e) {
-            if (terminal.gameMode == true){
+            if (terminal.gameMode == true && terminal.gamePong){
 
                 if (e.which == 27) {              
                     var htmlToAppend = '<div style="margin-top: 20px;" class="inputActiveDiv">' +
@@ -1123,7 +890,7 @@
                     
                     clearInterval((terminal.interval));
                     terminal.gameMode = false;
-                    terminal.gameModeInitial = true;
+                    //terminal.gameModeInitial = true;
                     $(".terminalBody").html(htmlToAppend);
                     $(".active").focus();
                     $(".terminalBody").animate({ scrollTop: $(".terminalBody").height()*5}, 100);

@@ -1,0 +1,215 @@
+
+body {
+    cursor: url('../images/cursor.png'), pointer;
+}
+
+input {
+    background: transparent;
+    border: none;
+}
+
+input:focus {
+    outline: none;
+}   
+
+.closeTerminal:hover {
+    cursor: pointer;
+}
+
+span {
+    color: white;
+}
+
+a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.terminal {
+    background-color: #192734;
+    height: 75vh;
+    width: 100%;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background-color: azure;
+    min-height: 33px;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
+.terminalBody {
+    font-family: 'IBM Plex Mono', monospace;
+    padding-left: 15px;
+    overflow-y: auto;
+    margin-left: 5px;
+    display: inline-grid;
+}
+
+.colorAbout {
+    color: white;
+}
+
+.imgMeAbout {
+    border: 1px limegreen solid;
+}
+
+.dashed-border-topAndBottom {
+    width: 100%;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-image: url(../images/borderTopAndDown.png) 10000 0 repeat;
+}
+
+.dashed-border-leftAndRight {
+    width: 39%;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    border-image: url(../images/borderLeftAndRight.png) 1 10 repeat;
+}
+
+.dashed-border-bottom {
+    width: 100%;
+    border-bottom: 1px solid transparent;
+    border-image: url(../images/borderTopAndDown.png) 10000 0 repeat;
+}
+
+th, td {
+    padding: 10px;
+    color: white;
+}
+
+.educationTable th {
+    color: deeppink;
+}
+
+#spaceship {
+    position: absolute;
+    left: 47.3%;
+    width: 100px;
+    height: 30px;
+    background-color: aliceblue;
+    bottom: 15vh;
+}
+
+#ball {
+    position: absolute;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: aliceblue;
+    /*bottom: 80vh;*/
+    top: 20%;
+}
+
+#countdown {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30vh;
+    font-size: 50px;
+    color: limegreen;
+}
+
+.headerName {
+    font-family: 'IBM Plex Mono', monospace;
+    margin-left: 5px;
+    font-size: 15px;
+    padding-top: 2px;
+    color: deeppink;
+}
+
+.headerSymbol {
+    color: deeppink;
+}
+
+.closeTerminal {
+    margin-left: auto; 
+    color: #192734;
+}
+
+/* Estilo do alert CMD */
+.cmd-alert {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    padding: 15px;
+    margin: 20px auto;
+    background-color: #1e1e1e;
+    border-radius: 5px;
+    max-width: 600px;
+    width: 90%;
+    font-size: 1.1em;
+}
+
+/* Estilo do ícone CMD */
+.cmd-icon {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+/* Estilo do conteúdo do alerta */
+.cmd-content {
+    flex: 1;
+    color: white;
+}
+
+
+/* CSS */
+.button-54 {
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: #000;
+    cursor: pointer;
+    border: 3px solid;
+    padding: 0.25em 0.5em;
+    box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.button-54:active {
+    box-shadow: 0px 0px 0px 0px;
+    top: 5px;
+    left: 5px;
+}
+
+@media (min-width: 768px) {
+    .button-54 {
+        padding: 0.25em 0.75em;
+    }
+}
