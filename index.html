@@ -21,9 +21,13 @@
     <script type="module" src="./js/config.js"></script>
     
 </head>
-<body style="background-color: pink;">
+<body>
 
-    <div id="cmdAlert" class="cmd-alert" style=" margin-left: 34%;">
+    <div id="loading-screen">
+        <pre id="loading-text">Loading TerminalPortfolio...</pre>
+    </div>
+
+    <div id="cmdAlert" class="cmd-alert">
         <span class="cmd-icon">C:\></span>
         <div class="cmd-content">
             
@@ -70,7 +74,6 @@
         ballSpeed: 2,
         ballTouches: 0,
         interval: null,
-        gamePong: false,
         //projects
         gitHubAccount: "goncalosilva07",
         projectName: null,
@@ -758,7 +761,7 @@
         },
 
         ballMovement: function(){
-
+            
             var ballX = $("#ball").position().left;
             var ballY = $("#ball").position().top;
 
@@ -779,7 +782,7 @@
             //var maxWidth = $(".terminal").width() + (($(window).width() - $(".terminal").width()) / 2);
             var maxWidth = ($(".terminal").position().left + $(".terminal").width()) - 22;
             
-            //var ballTouchesTemp = 0;
+            var ballTouchesTemp = 0;
 
             if(((ballY + ballHeight) >= spaceshipY && (spaceshipY + spaceshipHeight) >= (ballY + ballHeight)) && (ballX >=spaceshipX && ballX <= (spaceshipX + $("#spaceship").width()))){
         
@@ -795,7 +798,7 @@
                 //terminal.ballDirectionX = -1;
                 terminal.ballDirectionY = -1;
                 terminal.ballTouches += 1;
-                //ballTouchesTemp += 1;
+                ballTouchesTemp = terminal.ballTouches;
                 //ballTouchesTemp = terminal.ballTouches;
 
                 $('#scorePong').html(terminal.ballTouches);
@@ -814,22 +817,15 @@
             }
 
             if (ballY >= minHeight){
-                //$("#ball").css('bottom', '80vh');
-                //$("#ball").css('left', '50%');
+
                 clearInterval((terminal.interval));
                 $("#ball").css('top', '20%');
                 $("#ball").css('left', '50%');
                
-                /*
-                setTimeout(function(){ 
-                    console.log(1);
-                    terminal.interval = setInterval((terminal.ballMovement), 10);
-                }, 3000);
-                */
-                //terminal.enter("pong game");
                 terminal.pongWaitTime();
                 terminal.ballDirectionX = terminal.ballInitialShotRandomize();
                 terminal.ballTouches = 0;
+                terminal.ballSpeed = 2;
                 $('#scorePong').html(terminal.ballTouches);
                 
             }else{
@@ -837,7 +833,8 @@
                 $('#ball').css('top', ballY + (terminal.ballSpeed * terminal.ballDirectionY));
             }
 
-            if (((terminal.ballTouches % 5) == 0) && (terminal.ballTouches != 0)){
+            if (((ballTouchesTemp % 5) == 0) && (ballTouchesTemp != 0)){
+                
                 terminal.ballSpeed += 0.2;
             }
             
@@ -854,6 +851,10 @@
     };
     $(document).ready(function () {
 
+        setTimeout(function () {
+            $("#loading-screen").fadeOut(500);
+        }, 2000); // Tempo de exibição da tela de loading
+        
         $("#cmdAlert").hide();
 
         onAuthStateChanged(auth, (user) => {
@@ -879,8 +880,7 @@
         });
 
         $(document).keydown(function(e) {
-            if (terminal.gameMode == true && terminal.gamePong){
-
+            if (terminal.gameMode == true){
                 if (e.which == 27) {              
                     var htmlToAppend = '<div style="margin-top: 20px;" class="inputActiveDiv">' +
                                        '<span style="color: bisque;"><span style="color: aquamarine;">guest</span>@<span style="color: lightsalmon;">portfolio.com</span>:$~</span> ' + 
@@ -899,13 +899,6 @@
                 var minWidth = $(".terminal").position().left;
                 var maxWidth = ($(".terminal").position().left + $(".terminal").width()) - 22;
 
-                //terminal.ballMovement();
-                /*
-                if (terminal.gameModeInitial == true){
-                    terminal.interval = setInterval((terminal.ballMovement), 10);
-                }
-                */
-                
                 const valueToMove = 10,
                       spaceShipPosition = $("#spaceship").position().left;
 
@@ -923,8 +916,6 @@
                         $('#spaceship').css('left', newPosition);
                     }
                 }
-
-                //terminal.gameModeInitial = false;
             }
         });
         
