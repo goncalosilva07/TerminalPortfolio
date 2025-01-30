@@ -101,7 +101,7 @@
                         resolve(htmlToAppend); 
                     },
                     error: function (data) {
-                        htmlToAppend += 'Project not found';
+                        htmlToAppend += 'No inspirational phrases at the moment.';
                         htmlToAppend += '</div>';
                         resolve(htmlToAppend); 
                     }
@@ -484,9 +484,7 @@
 
         helpCommands: function(){
             var help = {'clear':'Clear the terminal', 'dir':'List portfolio sections. Let\'s see what\'s here... Spoiler: nothing classified!', 
-            'cd [section]': 'Change to the specified section. Ex: cd about.', 'games':'Show all the games! (Caution: Highly addictive content ahead)',
-            'game [game_name]': 'Ready to play? Choose your game and let\'s get started!',
-            'p d [project_name]': 'Curious? This is your backstage pass to all the juicy project info.', 'p i [project_name]': 'For the curious and the skeptical. Here’s what the project looks like!',
+            'games':'Show all the games! (Caution: Highly addictive content ahead)',        
             'contacts':'Slide into my DMs. Or, you know, email.', 'feedback':'Your thoughts, my growth. Let’s hear it!',
             'download cv':'My CV! Download it. Frame it. Admire it.', 'quote':'Because sometimes you just need someone else\'s words.'},
             htmlToAppend = "";
@@ -503,6 +501,9 @@
             $.each(dir, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
             });
+
+            htmlToAppend += '<span style="color: white; margin-top: 30px;">Type \'cd [section]\' to change to the specified section. Ex: cd about.</span>';
+            
             return htmlToAppend;
         },
 
@@ -707,8 +708,8 @@
                             while ((match = imageRegex.exec(data)) !== null) {
                                 const text = match[1];   
                                 const imageUrl = match[2];                 
-                                htmlToAppend += '<span style="margin-top: 30px;margin-bottom: -12px; z-index: 1; font-weight: 700; font-size: large; text-shadow: 7px 7px #192734"> > ' + text + '</span>';
-                                htmlToAppend += '<img src="https://raw.githubusercontent.com/' + terminal.gitHubAccount + '/' + terminal.projectName + '/main/' + imageUrl + '" alt="Imagem do projeto" style="width: 500px;">';                                                                  
+                                htmlToAppend += '<span class="imgProjectHeader"> > ' + text + '</span>';
+                                htmlToAppend += '<img src="https://raw.githubusercontent.com/' + terminal.gitHubAccount + '/' + terminal.projectName + '/main/' + imageUrl + '" class="imgProject" alt="Imagem do projeto">';                                                                  
                             }
                             htmlToAppend += '</div>'; 
                             resolve(htmlToAppend);
@@ -728,6 +729,9 @@
             $.each(games, function(index, value){
                 htmlToAppend += '<span style="color: white; margin-left: 20px;"> > ' + index + ' - ' + value + '</span>';
             });
+
+            htmlToAppend += '<span style="color: white; margin-top: 30px;">Type \'game [game_name]\' to choose a game. Ready to play? Choose your game and let\'s get started!</span>';
+           
             return htmlToAppend;
         },
 

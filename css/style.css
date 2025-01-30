@@ -199,6 +199,31 @@ th, td {
     color: deeppink;
 }
 
+.imgProjectHeader{
+    margin-top: 30px;
+    margin-bottom: 10px;
+    margin-left: 5px;
+    z-index: 1; 
+    font-weight: 700; 
+    font-size: large; 
+    color: rgb(255, 255, 255);
+    text-shadow: 7px 7px #753477
+}
+
+.imgProject {
+    border-radius: 5px;
+    max-width: 60%;
+    max-height: 500px;
+}
+
+.imgProject:active {
+    transform: scale(1.5);
+    transition: transform 1s ease;
+    margin-right: auto;
+    margin-left: auto;
+    z-index: 9999;
+}
+
 .closeTerminal {
     margin-left: auto; 
     color: #192734;
@@ -218,20 +243,16 @@ th, td {
     font-size: 1.1em;
 }
 
-/* Estilo do ícone CMD */
 .cmd-icon {
     font-weight: bold;
     margin-right: 10px;
 }
 
-/* Estilo do conteúdo do alerta */
 .cmd-content {
     flex: 1;
     color: white;
 }
 
-
-/* CSS */
 .button-54 {
     font-family: "Open Sans", sans-serif;
     font-size: 16px;
